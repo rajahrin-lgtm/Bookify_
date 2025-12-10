@@ -2,7 +2,8 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { Book } from "../types";
 
 // Initialize Gemini Client
-// Note: In a real production app, ensure API_KEY is set in environment variables.
+// The API key is injected via vite.config.ts into process.env.API_KEY
+// DO NOT use import.meta.env here to strictly follow SDK guidelines.
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 export const searchBooks = async (query: string): Promise<Book[]> => {
@@ -35,7 +36,8 @@ export const searchBooks = async (query: string): Promise<Book[]> => {
     return [];
   } catch (error) {
     console.error("Gemini Search Error:", error);
-    throw new Error("Failed to fetch book recommendations.");
+    // Don't crash the app, just return empty
+    return [];
   }
 };
 
@@ -69,7 +71,6 @@ export const autoFillBookMetadata = async (isbnOrTitle: string): Promise<Partial
     return {};
   } catch (error) {
     console.error("Gemini Metadata Error:", error);
-    // Fail silently or throw, UI handles loading state
     throw new Error("Could not auto-fill metadata.");
   }
 };
